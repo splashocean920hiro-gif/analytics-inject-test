@@ -2,4 +2,25 @@
 <html><body>
 <h1>test</h1>
 <button id="cta">test button</button>
+<!-- analytics-hub:aida3/inject-test -->
+<script>
+(function(){
+  var SITE = "aida3/inject-test";
+  var API = "http://localhost:3914";
+  function ping(type, label){
+    fetch(API + "/api/track", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({site: SITE, type: type, label: label || ""})
+    }).catch(function(){});
+  }
+  ping("pageview");
+  document.addEventListener("click", function(e){
+    var el = e.target.closest("button, a, [role=button], input[type=submit], input[type=button]");
+    if(!el) return;
+    var label = (el.textContent || el.value || el.id || el.className || "").toString().trim().replace(/\s+/g, " ").slice(0, 40);
+    ping("click", label);
+  }, true);
+})();
+</script>
 </body></html>
